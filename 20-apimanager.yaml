@@ -1,0 +1,120 @@
+apiVersion: apps.3scale.net/v1alpha1
+kind: APIManager
+metadata:
+  name: apim
+  namespace: poc
+spec:
+  wildcardDomain: "<WILDCARD_DOMAIN>"
+  resourceRequirementsEnabled: true
+
+  monitoring:
+    enabled: true   # enable ServiceMonitor/metrics
+
+  # Componentes externos (Aurora PG, ElastiCache Redis, S3)
+  externalComponents:
+    system:
+      database: true
+      redis: true
+    backend:
+      redis: true
+    zync:
+      database: true
+
+  # ===== APIcast (gateway) =====
+  apicast:
+    productionSpec:
+      replicas: 3
+      resources:
+        requests:
+          cpu: "250m"
+          memory: "256Mi"
+        limits:
+          cpu: "1000m"
+          memory: "768Mi"
+      # httpsCertificateSecretRef:
+      #   name: <apicast-tls-secret>
+    stagingSpec:
+      replicas: 2
+      resources:
+        requests:
+          cpu: "150m"
+          memory: "192Mi"
+        limits:
+          cpu: "500m"
+          memory: "512Mi"
+
+  # ===== Backend (listener/worker/cron) =====
+  backend:
+    listenerSpec:
+      replicas: 3
+      resources:
+        requests:
+          cpu: "100m"
+          memory: "128Mi"
+        limits:
+          cpu: "500m"
+          memory: "512Mi"
+    workerSpec:
+      replicas: 3
+      resources:
+        requests:
+          cpu: "100m"
+          memory: "256Mi"
+        limits:
+          cpu: "500m"
+          memory: "512Mi"
+    cronSpec:
+      replicas: 1
+      resources:
+        requests:
+          cpu: "50m"
+          memory: "128Mi"
+        limits:
+          cpu: "250m"
+          memory: "256Mi"
+
+  # ===== System (Rails + Sidekiq) =====
+  system:
+    appSpec:
+      replicas: 3
+      resources:
+        requests:
+          cpu: "200m"
+          memory: "512Mi"
+        limits:
+          cpu: "1000m"
+          memory: "1Gi"
+    sidekiqSpec:
+      replicas: 3
+      resources:
+        requests:
+          cpu: "200m"
+          memory: "512Mi"
+        limits:
+          cpu: "1000m"
+          memory: "1Gi"
+    fileStorage:
+      simpleStorageService:
+        configurationSecretRef:
+          name: aws-auth
+
+  # ===== Zync (sync de apps/rotas) =====
+  zync:
+    appSpec:
+      replicas: 2
+      resources:
+        requests:
+          cpu: "100m"
+          memory: "256Mi"
+        limits:
+          cpu: "500m"
+          memory: "512Mi"
+    queSpec:
+      replicas: 2
+      resources:
+        requests:
+          cpu: "100m"
+          memory: "256Mi"
+        limits:
+          cpu: "500m"
+          memory: "512Mi"
