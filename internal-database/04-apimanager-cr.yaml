@@ -1,0 +1,32 @@
+apiVersion: apps.3scale.net/v1alpha1
+kind: APIManager
+metadata:
+  name: api
+  namespace: apim
+spec:
+  wildcardDomain: apps.cluster-zs9dh.zs9dh.sandbox5283.opentlc.com
+
+  monitoring:
+    enabled: true   # enable ServiceMonitor/metrics
+
+  resourceRequirementsEnabled: false
+
+  externalComponents:
+    backend:
+      redis: false
+    system:
+      database: false
+      redis: false
+    zync:
+      database: false
+      
+  system:
+    database:
+      postgresql: {}
+    fileStorage:
+      persistentVolumeClaim:
+        resources:
+          requests: "10Gi"
+  apicast:
+    stagingSpec: {}
+    productionSpec: {}

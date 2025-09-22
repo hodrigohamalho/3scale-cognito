@@ -28,4 +28,5 @@ oc apply -f 03-s3-secret.yaml
 oc apply -f 20-apimanager.yaml
 ```
 
-Aguarde os pods ficarem *Ready*. Obtenha a URL do **Admin Portal** para criar o **Access Token** (com permissões *admin*).
+
+

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pgdata
+  namespace: kc
+spec:
+  accessModes: [ "ReadWriteOnce" ]
+  storageClassName: gp2-si
+  resources:
+    requests:
+      storage: 10Gi
